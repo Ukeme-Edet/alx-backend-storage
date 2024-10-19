@@ -4,11 +4,11 @@
 -- - Column names must be: `origin` and `nb_fans`
 -- Script can be executed on any database
 SELECT
-	origin,
-	COUNT(*) AS nb_fans
+	`origin`,
+	COUNT(`name`) AS `nb_fans`
 FROM
-	metal_bands
+	`metal_bands`
 GROUP BY
-	origin
+	`origin`
 ORDER BY
-	nb_fans DESC;
+	`nb_fans` DESC;
