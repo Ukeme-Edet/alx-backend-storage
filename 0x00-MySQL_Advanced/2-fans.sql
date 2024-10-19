@@ -5,7 +5,7 @@
 -- Script can be executed on any database
 SELECT
 	`origin`,
-	COUNT(`fans`) AS `nb_fans`
+	SUM(`fans`) AS `nb_fans`
 FROM
 	`metal_bands`
 GROUP BY
