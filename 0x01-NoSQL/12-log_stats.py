@@ -13,7 +13,8 @@ def count_logs(mongo_collection):
     Counts the total number of documents in a MongoDB collection.
 
     Args:
-        mongo_collection (pymongo.collection.Collection): The MongoDB collection to count documents in.
+        mongo_collection (pymongo.collection.Collection): The MongoDB\
+            collection to count documents in.
 
     Returns:
         int: The total number of documents in the collection.
@@ -23,10 +24,12 @@ def count_logs(mongo_collection):
 
 def count_method(mongo_collection, method):
     """
-    Counts the number of documents in a MongoDB collection that match a specified method.
+    Counts the number of documents in a MongoDB collection that match a\
+        specified method.
 
     Args:
-        mongo_collection (pymongo.collection.Collection): The MongoDB collection to query.
+        mongo_collection (pymongo.collection.Collection): The MongoDB\
+            collection to query.
         method (str): The method to count within the collection.
 
     Returns:
@@ -37,13 +40,16 @@ def count_method(mongo_collection, method):
 
 def count_check(mongo_collection):
     """
-    Counts the number of documents in a MongoDB collection that match the specified criteria.
+    Counts the number of documents in a MongoDB collection that match the\
+        specified criteria.
 
     Args:
-        mongo_collection (pymongo.collection.Collection): The MongoDB collection to query.
+        mongo_collection (pymongo.collection.Collection): The MongoDB\
+            collection to query.
 
     Returns:
-        int: The count of documents where the method is "GET" and the path is "/status".
+        int: The count of documents where the method is "GET" and the path is \
+            "status".
     """
     return mongo_collection.count_documents(
         {"method": "GET", "path": "/status"}
