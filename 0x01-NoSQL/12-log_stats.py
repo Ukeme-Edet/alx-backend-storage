@@ -57,12 +57,10 @@ def count_check(mongo_collection):
 
 
 if __name__ == "__main__":
-    print("{} logs".format(count_logs(nginx_logs)))
+    print(f"{count_logs(nginx_logs)} logs")
     print("Methods:")
     [
-        print(
-            "\tmethod {}: {}".format(method, count_method(nginx_logs, method))
-        )
+        print(f"\tmethod {method}: {count_method(nginx_logs, method)}")
         for method in methods
     ]
-    print("{} status check".format(count_check(nginx_logs)))
+    print(f"{count_check(nginx_logs)} status check")
