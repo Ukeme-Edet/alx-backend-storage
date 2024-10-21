@@ -57,6 +57,15 @@ def count_check(mongo_collection):
 
 
 def count_ips(mongo_collection):
+    """
+    Counts the occurrences of each IP address in the provided MongoDB collection.
+
+    Args:
+        mongo_collection (pymongo.collection.Collection): The MongoDB collection containing log entries.
+
+    Returns:
+        dict: A dictionary where the keys are IP addresses and the values are the counts of occurrences of those IP addresses in the collection.
+    """
     ip_count = {}
     logs = mongo_collection.find()
     for log in logs:
