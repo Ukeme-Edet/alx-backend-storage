@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-List all documents in Python
+Top students
 """
 
 
@@ -14,19 +14,23 @@ def top_students(mongo_collection):
     Returns:
         list of students
     """
-    [
-        student
-        for student in mongo_collection.aggregate(
-            [
-                {
-                    "$project": {
-                        "name": 1,
-                        "averageScore": {"$avg": "$topics.score"},
+    students = mongo_collection.aggregate(
+        [
+            {
+                "$project": {
+                    "_id": 1,
+                    "name": 1,
+                    "averageScore": {
+                        "$avg": {
+                            "$avg": "$topics.score",
+                        },
                     },
+                    "topics": 1,
                 },
-                {
-                    "$sort": {"averageScore": -1},
-                },
-            ]
-        )
-    ]
+            },
+            {
+                "$sort": {"averageScore": -1},
+            },
+        ]
+    )
+    return students
