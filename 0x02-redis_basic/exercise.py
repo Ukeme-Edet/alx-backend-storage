@@ -125,3 +125,21 @@ class Cache:
             The data from the Redis cache as an integer.
         """
         return self.get(key, int)
+
+
+def replay(method: Callable) -> None:
+    """
+    Display the history of the method calls.
+
+    Args:
+        method: The method to display the history for.
+    """
+    key = method.__qualname__
+    redis = method.__self__._redis
+    inputs = redis.lrange(f"{key}:inputs", 0, -1)
+    outputs = redis.lrange(f"{key}:outputs", 0, -1)
+
+    print(f"{key} was called {redis.get(key).decode()} times:")
+
+    for i, o in zip(inputs, outputs):
+        print(f"{key}(*{i.decode()}) -> {o.decode()}")
