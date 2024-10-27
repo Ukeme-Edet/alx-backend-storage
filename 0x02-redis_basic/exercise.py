@@ -5,6 +5,30 @@ This module provides a class to store data in a Redis cache.
 from typing import Callable, Optional, Union
 import uuid
 import redis
+from functools import wraps
+
+
+def count_calls(method: Callable) -> Callable:
+    """
+    A decorator that counts the number of times a method is called.
+
+    Args:
+        method: The method to count the calls for.
+
+    Returns:
+        The wrapped method.
+    """
+    key = method.__qualname__
+
+    @wraps(method)
+    def wrapper(self, *args, **kwargs):
+        """
+        Wrapper function to count method calls.
+        """
+        self._redis.incr(key)
+        return method(self, *args, **kwargs)
+
+    return wrapper
 
 
 class Cache:
@@ -19,12 +43,16 @@ class Cache:
         self._redis = redis.Redis()
         self._redis.flushdb()
 
+    @count_calls
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """
         Store the data in the Redis cache.
 
         Args:
             data: The data to store.
+
+        Returns:
+            The key of the stored data
         """
         key = str(uuid.uuid4())
         self._redis.set(key, data)
@@ -39,6 +67,9 @@ class Cache:
         Args:
             key: The key of the data to retrieve.
             fn: An optional function to apply to the data.
+
+        Returns:
+            The data from the Redis cache.
         """
         data = self._redis.get(key)
         if fn:
@@ -51,6 +82,9 @@ class Cache:
 
         Args:
             key: The key of the data to retrieve.
+
+        Returns:
+            The data from the Redis cache as a string.
         """
         return self.get(key, str)
 
@@ -60,5 +94,8 @@ class Cache:
 
         Args:
             key: The key of the data to retrieve.
+
+        Returns:
+            The data from the Redis cache as an integer.
         """
         return self.get(key, int)
