@@ -1,39 +1,52 @@
 #!/usr/bin/env python3
 """
-This module provides a function to fetch and cache web pages using Redis.
-
-Functions:
-    get_page(url: str) -> str:
-        Fetches the content of the given URL. If the content is cached in\
-            Redis, it returns the cached content. Otherwise, it fetches the\
-                content from the web, caches it in Redis for 10 seconds, and\
-                    then returns it.
+Web module
 """
-import redis
 import requests
+import redis
+from functools import wraps
+from typing import Callable
 
-cache = redis.Redis()
+r = redis.Redis()
 
 
-def get_page(url: str) -> str:
+def cache_with_expiry(expiry: int):
     """
-    Fetches the content of a given URL, utilizing a cache to store and\
-        retrieve the content.
-
-    If the content of the URL is found in the cache, it is returned directly.\
-        Otherwise, the content is fetched from the URL, stored in the cache\
-            with an expiration time of 10 seconds, and then returned.
+    Cache with expiry decorator
 
     Args:
-        url (str): The URL of the page to fetch.
+        expiry (int): expiry time in seconds
 
     Returns:
-        str: The content of the page.
+        Callable: decorator
     """
-    res = cache.get(url)
-    if res:
-        return res.decode("utf-8")
-    res = requests.get(url).text
-    print("Fetched")
-    cache.setex(url, 10, res)
-    return res
+
+    def decorator(func: Callable):
+        @wraps(func)
+        def wrapper(url: str) -> str:
+            cached_content = r.get(url)
+            if cached_content:
+                return cached_content.decode("utf-8")
+            content = func(url)
+            r.setex(url, expiry, content)
+            r.incr(f"count:{url}")
+            return content
+
+        return wrapper
+
+    return decorator
+
+
+@cache_with_expiry(10)
+def get_page(url: str) -> str:
+    """
+    Get page
+
+    Args:
+        url (str): url
+
+    Returns:
+        str: page content
+    """
+    response = requests.get(url)
+    return response.text
