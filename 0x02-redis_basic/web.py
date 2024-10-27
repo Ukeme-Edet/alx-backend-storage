@@ -26,6 +26,7 @@ def cache_with_expiry(expiry: int):
         def wrapper(url: str) -> str:
             cached_content = r.get(url)
             if cached_content:
+                r.incr(f"count:{url}")
                 return cached_content.decode("utf-8")
             content = func(url)
             r.setex(url, expiry, content)
