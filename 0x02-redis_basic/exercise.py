@@ -31,7 +31,7 @@ class Cache:
         return key
 
     def get(
-        self, key: str, fn: Optional[Callable]
+        self, key: str, fn: Optional[Callable] = None
     ) -> Union[str, bytes, int, float]:
         """
         Retrieve the data from the Redis cache.
